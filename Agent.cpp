@@ -19,14 +19,22 @@ namespace Gaming{
         __energy -= AGENT_FATIGUE_RATE;
     }
     Piece &Agent::operator*(Piece &other){
-
+        return other.interact(this);
     }
     Piece &Agent::interact(Agent *other){
-
-        return *other;
+        if(__energy > other->__energy){
+            other->finish();
+        }
+        if(__energy < other->__energy){
+            finish();
+        } else{
+            other->finish();
+            finish();
+        }
+        return *this;
     }
     Piece &Agent::interact(Resource *other){
-        __energy += other->consume();
-
+        other->interact(this);
+        return *this;
     }
 }

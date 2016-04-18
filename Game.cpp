@@ -8,6 +8,7 @@
 #include "Food.h"
 #include "Strategic.h"
 #include "Advantage.h"
+#include <iomanip>
 
 namespace Gaming {
 
@@ -63,21 +64,6 @@ namespace Gaming {
             }
         }
 
-                    /*
-                      unsigned __numInitAgents, __numInitResources;
-
-                      unsigned __width, __height;
-                      std::vector<Piece *> __grid; // if a position is empty, nullptr
-
-                      unsigned int __round;
-
-                      Status __status;
-
-                      bool __verbose;
-
-                          Public:
-                  */
-
     const unsigned int Game::NUM_INIT_AGENT_FACTOR = 4;
     const unsigned int Game::NUM_INIT_RESOURCE_FACTOR = 2;
     const unsigned Game::MIN_WIDTH = 3;
@@ -93,6 +79,7 @@ namespace Gaming {
         __numInitResources = 0;
         __round = 0;
         __verbose = false;
+        __status = NOT_STARTED;
         for (int i = 0; i < __height; ++i) {
             for (int j = 0; j < __width; ++j) {
                 __grid.push_back(nullptr);
@@ -130,7 +117,7 @@ namespace Gaming {
 
     Game::~Game() {
         for(int i = 0; i < __height*__width; i++){
-
+            delete __grid[i];
         }
     }
 
@@ -147,29 +134,42 @@ namespace Gaming {
         return total;
     }
 
+
+    // Currently biased towards the top right pieces, but I couldn't get std::set working.
     void Game::round() {   // play a single round
         for(int i = 0; i < __height*__width; ++i){
             if(__grid[i] != nullptr){
-                if(__grid[i]->getType() == FOOD){
+                if(!__grid[i]->getTurned()){
+                    __grid[i]->age();
+                    __grid[i]->setTurned(true);
                     if(!__grid[i]->isViable()){
+                        delete __grid[i];
+                        __grid[i] = nullptr;
+                    }else{
+                        Position pos = __grid[i]->getPosition();
+                        Surroundings tempS = getSurroundings(pos);
+                        ActionType ac = __grid[i]->takeTurn(tempS);
 
+                        if(isLegal(ac,pos)){
+                            Position posNew = move(pos,ac);
+                            int posNewI = (pos.x*__width) + pos.y;
+                            if(__grid[posNewI] == nullptr){
+                                __grid[i]->setPosition(posNew);
+                            }
+                            else{
+                                (*__grid[i])*(*__grid[posNewI]);
+                            }
+                        }
                     }
-                }
-
-                if(__grid[i]->getType() == FOOD){
-
-                }
-
-                if(__grid[i]->getType() == FOOD){
-
-                }
-
-                if(__grid[i]->getType() == FOOD){
-
                 }
             }
         }
         __round++;
+        for(int i = 0; i < 0; i++){
+            if(__grid[i] != nullptr){
+                __grid[i]->setTurned(false);
+        }
+    }
     }
 
     std::ostream &operator<<(std::ostream &os, const Game &game) {
@@ -177,7 +177,11 @@ namespace Gaming {
 
         for (int i = 0; i < game.__height; ++i) {
             for (int j = 0; j < game.__width; ++j) {
-                os << "[     ]";
+                if((game.__grid[(i * game.__width) + j]) == nullptr){
+                    os << "[     ]";
+                }else{
+                    os << "[" << std::setw(5) << std::left << *(game.__grid[(i * game.__width) + j]) << "]";
+                }
             }
             os << std::endl;
         }
@@ -186,7 +190,18 @@ namespace Gaming {
     }
 
     const Position Game::move(const Position &pos, const ActionType &ac) const { // note: assumes legal, use with isLegal()
-
+        ActionType arr[9] = {NW,N,NE,W,STAY,E,SE,S,SW};
+        int j = 4;
+        for(int i = 0; i < 9; i++){
+            if(ac == arr[i]){
+                j = i;
+            }
+        }
+        int x,y;
+        x = (j/3) - 1;
+        y = (j%3) - 1;
+        Position temp((pos.x+x)*__width,pos.y+y);
+        return temp;
     }
 
     unsigned int Game::getNumAgents() const {
@@ -448,20 +463,4 @@ namespace Gaming {
         void Game::play(bool verbose) {    // play game until over
 
         }
-//        const Agent &winner(); // what if no winner or multiple winners?
-
-        // Print as follows the state of the game after the last round:
-        //
-        // Round 1:
-        // [F0   ][     ][T1   ]
-        // [W2   ][     ][F3   ]
-        // [     ][S4   ][     ]
-        // Status: Playing...
-        //
-        // Round 5:
-        // [     ][     ][     ]
-        // [     ][T1   ][     ]
-        // [     ][     ][     ]
-        // Status: Over!
-        //
 }

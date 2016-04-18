@@ -3,6 +3,7 @@
 //
 
 #include "Resource.h"
+#include "Agent.h"
 namespace Gaming {
     const double Resource::RESOURCE_SPOIL_FACTOR = 1.2;
 
@@ -33,13 +34,14 @@ namespace Gaming {
 
 // note: these won't be called while resources don't move
     Piece &Resource::operator*(Piece &other){
-
+        return other.interact(this);
     }
-    Piece &Resource::interact(Agent *){
-
+    Piece &Resource::interact(Agent *other){
+        double energy = consume();
+        other->addEnergy(energy);
+        return *this;
     }
-    Piece &Resource::interact(Resource *){ // note: no interaction between resources
-
-
+    Piece &Resource::interact(Resource *other){ // note: no interaction between resources
+        return *this;
     }
 }
