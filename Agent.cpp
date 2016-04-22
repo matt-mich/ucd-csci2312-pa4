@@ -23,13 +23,18 @@ namespace Gaming{
     }
     Piece &Agent::interact(Agent *other){
         if(__energy > other->__energy){
+            other->__energy = 0.0;
             other->finish();
         }
         if(__energy < other->__energy){
+            __energy = 0.0;
             finish();
         } else{
+
             other->finish();
+            other->__energy = 0.0;
             finish();
+            __energy = 0.0;
         }
         return *this;
     }

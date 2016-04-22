@@ -10,6 +10,8 @@ namespace Gaming {
 
     Piece::Piece(const Game &g, const Position &p) : __game(g), __position(p){
         __id = __idGen++;
+        __finished = false;
+        __turned = false;
     }
     Piece::~Piece() {
 

@@ -21,7 +21,6 @@ using namespace Testing;
 
 
 
-
 // - - - - - - - - - - helper functions - - - - - - - - - -
 
 // - - - - - - - - - - local classes - - - - - - - - - -
@@ -210,8 +209,8 @@ void test_piece_energy(ErrorContext &ec, unsigned int numRuns) {
             Resource *r0 = &f, *r1 = &a;
 
             pass = (agent->getEnergy() == Game::STARTING_AGENT_ENERGY) &&
-                   (r0->getCapacity() == Game::STARTING_RESOURCE_CAPACITY) &&
-                   (r1->getCapacity() == Game::STARTING_RESOURCE_CAPACITY * Advantage::ADVANTAGE_MULT_FACTOR);
+                    (r0->getCapacity() == Game::STARTING_RESOURCE_CAPACITY) &&
+                    (r1->getCapacity() == Game::STARTING_RESOURCE_CAPACITY * Advantage::ADVANTAGE_MULT_FACTOR);
 
             ec.result(pass);
         }
@@ -333,7 +332,7 @@ void test_piece_turntaking(ErrorContext &ec, unsigned int numRuns) {
                     { piece[0]->takeTurn(surr[0]), piece[1]->takeTurn(surr[1]) };
 
             pass = (actions[0] == ActionType::STAY) &&
-                   (actions[1] == ActionType::STAY);
+                    (actions[1] == ActionType::STAY);
 
             ec.result(pass);
         }
@@ -797,14 +796,14 @@ void test_action_smoketest(ErrorContext &ec) {
         g.addSimple(1, 1); Position pos(1, 1);
 
         pass = g.isLegal(ActionType::N, pos) &&
-               g.isLegal(ActionType::NE, pos) &&
-               g.isLegal(ActionType::NW, pos) &&
-               g.isLegal(ActionType::E, pos) &&
-               g.isLegal(ActionType::W, pos) &&
-               g.isLegal(ActionType::SE, pos) &&
-               g.isLegal(ActionType::SW, pos) &&
-               g.isLegal(ActionType::S, pos) &&
-               g.isLegal(ActionType::STAY, pos);
+                g.isLegal(ActionType::NE, pos) &&
+                g.isLegal(ActionType::NW, pos) &&
+                g.isLegal(ActionType::E, pos) &&
+                g.isLegal(ActionType::W, pos) &&
+                g.isLegal(ActionType::SE, pos) &&
+                g.isLegal(ActionType::SW, pos) &&
+                g.isLegal(ActionType::S, pos) &&
+                g.isLegal(ActionType::STAY, pos);
     }
     ec.result(pass);
 
@@ -984,9 +983,9 @@ void test_game_populate(ErrorContext &ec, unsigned int numRuns) {
             }
 
             pass = pass &&
-                   (g.getNumPieces() == 7) &&
-                   (g.getNumAgents() == 3) &&
-                   (g.getNumResources() == 4);
+                          (g.getNumPieces() == 7) &&
+                          (g.getNumAgents() == 3) &&
+                          (g.getNumResources() == 4);
 
             ec.result(pass);
         }
@@ -1026,7 +1025,7 @@ void test_game_populate(ErrorContext &ec, unsigned int numRuns) {
             Game g(3, 3, false);
 
             pass = (g.getNumAgents() == 2) &&
-                   (g.getNumResources() == 4);
+                    (g.getNumResources() == 4);
 
             ec.result(pass);
         }
@@ -1051,7 +1050,7 @@ void test_game_populate(ErrorContext &ec, unsigned int numRuns) {
                    (g.getNumResources() == 40);
 
             if (! pass) std::cout << g.getNumAgents() << ' '
-                        << g.getNumResources() << ' ' << std::endl << g << ' ';
+                << g.getNumResources() << ' ' << std::endl << g << ' ';
 
             ec.result(pass);
         }
@@ -1365,14 +1364,14 @@ void test_game_randomization(ErrorContext &ec, unsigned int numRuns) {
             }
 
             pass = counts[0] > 100 &&
-                   counts[1] > 100 &&
-                   counts[2] > 100 &&
-                   counts[3] > 100 &&
-                   counts[4] == 0 &&
-                   counts[5] > 100 &&
-                   counts[6] > 100 &&
-                   counts[7] > 100 &&
-                   counts[8] > 100;
+                    counts[1] > 100 &&
+                    counts[2] > 100 &&
+                    counts[3] > 100 &&
+                    counts[4] == 0 &&
+                    counts[5] > 100 &&
+                    counts[6] > 100 &&
+                    counts[7] > 100 &&
+                    counts[8] > 100;
 
             if (! pass) for (auto c : counts) std::cout << c << ' ';
 
@@ -1418,14 +1417,14 @@ void test_game_randomization(ErrorContext &ec, unsigned int numRuns) {
             }
 
             pass = actionCounts[ActionType::NE] > 100 &&
-                   actionCounts[ActionType::NW] > 100 &&
-                   actionCounts[ActionType::N] > 100 &&
-                   actionCounts[ActionType::W] > 100 &&
-                   actionCounts[ActionType::E] > 100 &&
-                   actionCounts[ActionType::SW] > 100 &&
-                   actionCounts[ActionType::SE] > 100 &&
-                   actionCounts[ActionType::S] > 100 &&
-                   actionCounts[ActionType::STAY] == 0;
+                    actionCounts[ActionType::NW] > 100 &&
+                    actionCounts[ActionType::N] > 100 &&
+                    actionCounts[ActionType::W] > 100 &&
+                    actionCounts[ActionType::E] > 100 &&
+                    actionCounts[ActionType::SW] > 100 &&
+                    actionCounts[ActionType::SE] > 100 &&
+                    actionCounts[ActionType::S] > 100 &&
+                    actionCounts[ActionType::STAY] == 0;
 
             if (! pass) {
                 std::cout << std::endl;

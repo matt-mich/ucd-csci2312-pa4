@@ -135,12 +135,11 @@ namespace Gaming {
     }
 
 
-    // Currently biased towards the top right pieces, but I couldn't get std::set working.
+    // Currently biased towards the top pieces, but I couldn't get std::set working.
     void Game::round() {   // play a single round
         for(int i = 0; i < __height*__width; ++i){
             if(__grid[i] != nullptr){
                 if(!__grid[i]->getTurned()){
-                    __grid[i]->age();
                     __grid[i]->setTurned(true);
                     if(!__grid[i]->isViable()){
                         delete __grid[i];
@@ -152,12 +151,28 @@ namespace Gaming {
 
                         if(isLegal(ac,pos)){
                             Position posNew = move(pos,ac);
-                            int posNewI = (pos.x*__width) + pos.y;
+                            int posNewI = (posNew.x*__width) + posNew.y;
                             if(__grid[posNewI] == nullptr){
+                                __grid[posNewI] = __grid[i];
                                 __grid[i]->setPosition(posNew);
+                                __grid[i] = nullptr;
                             }
                             else{
                                 (*__grid[i])*(*__grid[posNewI]);
+
+                                if(!__grid[i]->isViable()){
+                                    Piece *temp = __grid[i];
+                                    __grid[i] = nullptr;
+                                    delete temp;
+                                }
+                                else if(!__grid[posNewI]->isViable()){
+                                    Piece *temp = __grid[posNewI];
+                                    __grid[posNewI] = nullptr;
+                                    delete temp;
+                                    __grid[posNewI] = __grid[i];
+                                    __grid[i]->setPosition(posNew);
+                                    __grid[i] = nullptr;
+                                }
                             }
                         }
                     }
@@ -165,9 +180,15 @@ namespace Gaming {
             }
         }
         __round++;
-        for(int i = 0; i < 0; i++){
+        for(int i = 0; i < __height*__width; i++){
             if(__grid[i] != nullptr){
+                __grid[i]->age();
                 __grid[i]->setTurned(false);
+                if(!__grid[i]->isViable()){
+                    Piece *temp = __grid[i];
+                    __grid[i] = nullptr;
+                    delete temp;
+                }
         }
     }
     }
@@ -185,22 +206,33 @@ namespace Gaming {
             }
             os << std::endl;
         }
-        os << "Status: " << game.__status << std::endl;
+        std::string stat;
+        if(game.__status == 0){
+            stat = "NOT STARTED";
+        }
+        else if (game.__status == 1){
+            stat = "PLAYING";
+        }
+        else if(game.__status == 2){
+            stat = "OVER";
+        }
+        os << "Status: " << stat << std::endl;
         return os;
     }
 
     const Position Game::move(const Position &pos, const ActionType &ac) const { // note: assumes legal, use with isLegal()
-        ActionType arr[9] = {NW,N,NE,W,STAY,E,SE,S,SW};
+        ActionType arr[9] = {NW,N,NE,W,STAY,E,SW,S,SE};
         int j = 4;
         for(int i = 0; i < 9; i++){
             if(ac == arr[i]){
                 j = i;
             }
         }
-        int x,y;
+        int x = 0;
+        int y = 0;
         x = (j/3) - 1;
         y = (j%3) - 1;
-        Position temp((pos.x+x)*__width,pos.y+y);
+        Position temp(((pos.x+x)),(pos.y+y));
         return temp;
     }
 
@@ -441,11 +473,20 @@ namespace Gaming {
         }
 
     const ActionType Game::reachSurroundings(const Position &from, const Position &to) { // note: STAY by default
-
+        ActionType arr[9] = {NW,N,NE,W,STAY,E,SW,S,SE};
+        int count = 0;
+        for(int i = -1; i < 2; i++){
+            for(int j = -1; j < 2; j++){
+                if(from.x+i == to.x && from.y+j == to.y){
+                    return arr[count];
+                }
+                count++;
+            }
+        }
         return STAY;
     }
     bool Game::isLegal(const ActionType &ac, const Position &pos) const{
-        ActionType arr[9] = {NW,N,NE,W,STAY,E,SE,S,SW};
+        ActionType arr[9] = {NW,N,NE,W,STAY,E,SW,S,SE};
         Surroundings temp;
         temp = this->getSurroundings(pos);
         int i = 4;
@@ -459,8 +500,36 @@ namespace Gaming {
         }
         return true;
     }
-
+        // Very messy. Barely functions.
         void Game::play(bool verbose) {    // play game until over
+            if(verbose){
+                std::cout << *this;
+            }
+            __status = PLAYING;
 
+            bool end = false;
+            while(!end){
+                round();
+                if (getNumAgents() == 0){
+                    __status = OVER;
+                    end = true;
+                }
+                else if(getNumStrategic() == 0 && getNumResources() == 0){
+                    __status = OVER;
+                    end = true;
+                }
+                else if(getNumStrategic() == 1 && getNumSimple() == 1 && getNumResources() == 0){
+                        __status = OVER;
+                        end = true;
+                }
+                else if(getNumAgents() <= 1 && getNumResources() == 0){
+                    __status = OVER;
+                    end = true;
+                }
+
+                if(verbose){
+                    std::cout << *this;
+                }
+            }
         }
 }

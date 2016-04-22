@@ -27,9 +27,9 @@ int main() {
     cout << endl;
 
     ErrorContext ec(cout);
-    /*
+
     // piece tests
-*/
+
     test_piece_smoketest(ec);
 
     test_piece_print(ec, NumIters);
@@ -51,9 +51,10 @@ int main() {
     test_game_smoketest(ec);
     test_game_populate(ec, NumIters);
     test_game_getpiece(ec, NumIters);
-     test_game_print(ec, NumIters);
+    test_game_print(ec, NumIters);
 
-     test_game_randomization(ec, NumIters);
+    test_game_randomization(ec, NumIters);
+
     test_game_play(ec, NumIters);
 
     return 0;

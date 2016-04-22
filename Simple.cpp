@@ -29,30 +29,40 @@ namespace Gaming{
     }
 
     ActionType Simple::takeTurn(const Surroundings &s) const{
-        ActionType arr[9] = {NW,N,NE,W,STAY,E,SE,S,SW};
-        std::vector<int> rec;
+        ActionType arr[9] = {NW,N,NE,W,STAY,E,SW,S,SE};
+        std::vector<int> adv;
+        std::vector<int>food;
         std::vector<int> empty;
-        PositionRandomizer rand;
         int j = 0;
         for(int i = 0; i < 9; ++i){
-            if(s.array[i] == FOOD || s.array[i] == ADVANTAGE){
-                rec.push_back(i);
+            if(s.array[i] == ADVANTAGE){
+                adv.push_back(i);
             }
         }
-        if(rec.size() > 0){
-            Position i = rand(rec);
-            int j = ((i.x*3)+(i.y));
+        if(adv.size() > 0){
+            Position i = Game::randomPosition(adv);
+            j = ((i.x*3)+(i.y));
             return arr[j];
         }
 
+        for(int i = 0; i < 9; ++i){
+            if(s.array[i] == FOOD){
+                food.push_back(i);
+            }
+        }
+        if(food.size() > 0){
+            Position i = Game::randomPosition(food);
+            j = ((i.x*3)+(i.y));
+            return arr[j];
+        }
         for(int i = 0; i < 9; ++i) {
             if(s.array[i] == EMPTY){
                 empty.push_back(i);
             }
         }
         if(empty.size() > 0){
-            Position i = rand(empty);
-            int j = ((i.x*3)+(i.y));
+            Position i = Game::randomPosition(empty);
+            j = ((i.x*3)+(i.y));
             return arr[j];
         }else{
             return STAY;

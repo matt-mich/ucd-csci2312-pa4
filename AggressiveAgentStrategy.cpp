@@ -16,8 +16,8 @@ namespace Gaming{
 
     }
     ActionType AggressiveAgentStrategy::operator()(const Surroundings &s) const{
-        ActionType arr[9] = {NW, N, NE, W, STAY, E, SE, S, SW};
-
+        ActionType arr[9] = {NW, N, NE, W, STAY, E, SW, S, SE};
+        double temp = DEFAULT_AGGRESSION_THRESHOLD;
         for (int i = 0; i < 9; ++i) {
             if (s.array[i] == SIMPLE) {
                 if(DEFAULT_AGGRESSION_THRESHOLD <= __agentEnergy){

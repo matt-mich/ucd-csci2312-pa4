@@ -13,7 +13,7 @@ namespace Gaming{
     }
 
     ActionType DefaultAgentStrategy::operator()(const Surroundings &s) const{
-        ActionType arr[9] = {NW, N, NE, W, STAY, E, SE, S, SW};
+        ActionType arr[9] = {NW, N, NE, W, STAY, E, SW, S, SE};
 
             for (int i = 0; i < 9; ++i) {
                 if (s.array[i] == ADVANTAGE) {
